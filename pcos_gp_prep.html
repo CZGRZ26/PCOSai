@@ -867,7 +867,7 @@ Generate a structured appointment brief with these sections:
 Tone: professional enough to be taken seriously by a GP, but written from the patient's perspective (use "I" voice). Be specific and assertive — this patient deserves to be heard. Keep it concise and scannable. Use bullet points within sections. Do not add disclaimers or notes about being an AI — this is the brief itself.`;
 
   try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
+    const response = await fetch('/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
