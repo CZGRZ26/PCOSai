@@ -545,9 +545,55 @@ section { position: relative; }
 
 .why-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 360px;
   gap: 4rem;
-  align-items: center;
+  align-items: start;
+}
+
+/* Early access card */
+.early-access-card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 2rem;
+  box-shadow: 0 4px 20px var(--shadow-sm);
+  text-align: center;
+}
+
+.early-access-icon {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  display: block;
+}
+
+.early-access-card h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.4rem; font-weight: 400;
+  color: var(--ink); margin-bottom: 0.8rem;
+}
+
+.early-access-card p {
+  font-size: 0.83rem; color: var(--text-mid);
+  line-height: 1.7; margin-bottom: 0.6rem;
+}
+
+.early-access-btn {
+  display: inline-block;
+  margin: 1rem 0 0.8rem;
+  background: var(--terra); color: #fff;
+  padding: 11px 24px; border-radius: 10px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.85rem; font-weight: 400;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+.early-access-btn:hover { background: var(--terra-deep); transform: translateY(-1px); }
+
+.early-access-note {
+  font-size: 0.7rem !important;
+  color: var(--text-soft) !important;
+  font-style: italic;
+  margin-top: 0.5rem !important;
 }
 
 .why-left h2 {
@@ -749,8 +795,7 @@ footer {
   .hero-inner { grid-template-columns: 1fr; gap: 3rem; }
   .hero-visual { display: none; }
   .why-grid { grid-template-columns: 1fr; }
-  .nav-links { display: none; }
-}
+  .nav-links { display: none; }}
 
 @media (max-width: 540px) {
   .hero { padding: 6rem 1.5rem 4rem; }
@@ -978,40 +1023,13 @@ footer {
         </ul>
       </div>
 
-      <div class="testimonial-stack reveal reveal-delay-2">
-        <div class="tcard">
-          <span class="tcard-accent">"</span>
-          <p class="tcard-quote">I left my diagnosis appointment with more questions than answers. This is the first time I've actually understood what's happening in my body.</p>
-          <div class="tcard-author">
-            <div class="tcard-dot a">SM</div>
-            <div class="tcard-info">
-              <div class="tcard-name">Sarah M.</div>
-              <div class="tcard-meta">Diagnosed 3 months ago · London</div>
-            </div>
-          </div>
-        </div>
-        <div class="tcard">
-          <span class="tcard-accent">"</span>
-          <p class="tcard-quote">The GP prep tool is a game-changer. My doctor actually read through it and said it was one of the most useful patient summaries she'd seen.</p>
-          <div class="tcard-author">
-            <div class="tcard-dot b">JK</div>
-            <div class="tcard-info">
-              <div class="tcard-name">Jess K.</div>
-              <div class="tcard-meta">PCOS for 2 years · Manchester</div>
-            </div>
-          </div>
-        </div>
-        <div class="tcard">
-          <span class="tcard-accent">"</span>
-          <p class="tcard-quote">Finally something that doesn't just tell me to cut out gluten and buy a supplement.</p>
-          <div class="tcard-author">
-            <div class="tcard-dot c">RP</div>
-            <div class="tcard-info">
-              <div class="tcard-name">Riya P.</div>
-              <div class="tcard-meta">Recently diagnosed · Birmingham</div>
-            </div>
-          </div>
-        </div>
+      <div class="early-access-card reveal reveal-delay-2">
+        <div class="early-access-icon">🌿</div>
+        <h3>Cyla is brand new.</h3>
+        <p>We're looking for people recently diagnosed with PCOS to try Cyla and tell us honestly what they think — what helped, what's missing, what could be better.</p>
+        <p>No sign-up. No cost. Just your genuine feedback.</p>
+        <a href="mailto:hello@cyla.app?subject=I'd like to try Cyla" class="early-access-btn">Get in touch →</a>
+        <p class="early-access-note">Real testimonials coming soon — from real users, with their permission.</p>
       </div>
     </div>
   </div>
