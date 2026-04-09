@@ -655,7 +655,7 @@ async function sendMessage() {
   addTyping();
 
   try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
+    const response = await fetch('/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -669,7 +669,9 @@ async function sendMessage() {
     const data = await response.json();
     removeTyping();
 
-    if (data.content && data.content[0]) {
+    if (response.status === 429) {
+      addMessage('ai', "You've reached the limit of 20 messages this hour — this keeps Cyla free for everyone. Come back in an hour and I'll be here. 🌿");
+    } else if (data.content && data.content[0]) {
       const reply = data.content[0].text;
       conversationHistory.push({ role: 'assistant', content: reply });
       addMessage('ai', reply);
