@@ -252,6 +252,7 @@ section { position: relative; }
   opacity: 0;
   animation: fadeLeft 0.8s ease 0.4s forwards;
   position: relative;
+  z-index: 2;
 }
 
 @keyframes fadeLeft {
@@ -341,6 +342,7 @@ section { position: relative; }
   color: var(--sage-dark);
   box-shadow: 0 4px 12px var(--shadow-sm);
   white-space: nowrap;
+  z-index: 10;
 }
 
 /* Animations */
@@ -1028,8 +1030,7 @@ footer {
         <h3>Cyla is brand new.</h3>
         <p>We're looking for people recently diagnosed with PCOS to try Cyla and tell us honestly what they think — what helped, what's missing, what could be better.</p>
         <p>No sign-up. No cost. Just your genuine feedback.</p>
-        <a href="mailto:cyla.website@gmail.com
-          ?subject=I'd like to try Cyla" class="early-access-btn">Get in touch →</a>
+        <a href="mailto:cyla.website@gmail.com?subject=I'd like to try Cyla" class="early-access-btn">Get in touch →</a>
         <p class="early-access-note">Real testimonials coming soon — from real users, with their permission.</p>
       </div>
     </div>
@@ -1108,9 +1109,14 @@ const observer = new IntersectionObserver((entries) => {
       observer.unobserve(entry.target);
     }
   });
-}, { threshold: 0.12 });
+}, { threshold: 0.01, rootMargin: '0px 0px -30px 0px' });
 
 reveals.forEach(el => observer.observe(el));
+
+// Fallback: reveal everything after 1.2s in case observer doesn't fire
+setTimeout(() => {
+  reveals.forEach(el => el.classList.add('visible'));
+}, 1200);
 </script>
 </body>
 </html>
