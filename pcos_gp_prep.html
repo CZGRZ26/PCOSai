@@ -662,23 +662,70 @@
       <p>The more context your doctor has, the better the appointment. And don't leave without getting your questions answered.</p>
     </div>
 
-    <div class="field-group-title">Current treatments</div>
+    <div class="field-group-title">Current & past treatments</div>
+
     <div class="field">
-      <label>Are you currently taking any medications for PCOS or related symptoms?</label>
-      <span class="hint">Include contraceptive pill, metformin, spironolactone, supplements, etc.</span>
-      <textarea id="f-meds" placeholder="e.g. Combined pill (Yasmin) — started 6 months ago. Taking Inositol supplement daily."></textarea>
+      <label>Medications you are currently taking or have tried</label>
+      <span class="hint">Tick all that apply — include current and past</span>
+      <div class="check-grid" style="margin-top:8px" id="meds-tried">
+        <label class="check-item"><input type="checkbox" value="Combined oral contraceptive pill (e.g. Yasmin, Microgynon, Cilest)"><div class="box"></div><span>Combined pill</span></label>
+        <label class="check-item"><input type="checkbox" value="Metformin"><div class="box"></div><span>Metformin</span></label>
+        <label class="check-item"><input type="checkbox" value="Spironolactone"><div class="box"></div><span>Spironolactone</span></label>
+        <label class="check-item"><input type="checkbox" value="Letrozole (for ovulation induction)"><div class="box"></div><span>Letrozole</span></label>
+        <label class="check-item"><input type="checkbox" value="Clomiphene citrate (Clomid)"><div class="box"></div><span>Clomid</span></label>
+        <label class="check-item"><input type="checkbox" value="GLP-1 agonist (e.g. Ozempic, Wegovy, Saxenda)"><div class="box"></div><span>GLP-1 / Ozempic</span></label>
+        <label class="check-item"><input type="checkbox" value="Topical treatments for acne or hair (e.g. Vaniqa, retinoids)"><div class="box"></div><span>Topical treatments</span></label>
+        <label class="check-item"><input type="checkbox" value="None yet"><div class="box"></div><span>None yet</span></label>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Supplements you have tried</label>
+      <span class="hint">Tick all that apply</span>
+      <div class="check-grid" style="margin-top:8px" id="supps-tried">
+        <label class="check-item"><input type="checkbox" value="Inositol (myo-inositol or d-chiro-inositol)"><div class="box"></div><span>Inositol</span></label>
+        <label class="check-item"><input type="checkbox" value="Magnesium"><div class="box"></div><span>Magnesium</span></label>
+        <label class="check-item"><input type="checkbox" value="Spearmint tea or capsules"><div class="box"></div><span>Spearmint</span></label>
+        <label class="check-item"><input type="checkbox" value="Vitamin D"><div class="box"></div><span>Vitamin D</span></label>
+        <label class="check-item"><input type="checkbox" value="Omega-3 / fish oil"><div class="box"></div><span>Omega-3</span></label>
+        <label class="check-item"><input type="checkbox" value="Berberine"><div class="box"></div><span>Berberine</span></label>
+        <label class="check-item"><input type="checkbox" value="N-acetyl cysteine (NAC)"><div class="box"></div><span>NAC</span></label>
+        <label class="check-item"><input type="checkbox" value="Zinc"><div class="box"></div><span>Zinc</span></label>
+        <label class="check-item"><input type="checkbox" value="None"><div class="box"></div><span>None</span></label>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>How well has your current treatment been working overall?</label>
+      <div class="scale-row" style="margin-top:10px">
+        <input type="range" min="1" max="10" value="5" id="f-treatment-rating" oninput="document.getElementById('treatment-val').textContent=this.value">
+        <div class="scale-val" id="treatment-val">5</div>
+      </div>
+      <div class="scale-labels"><span>Not working at all</span><span>Working very well</span></div>
+    </div>
+
+    <div class="field" style="margin-top:1rem">
+      <label>Any side effects or problems with treatments you've tried?</label>
+      <span class="hint">e.g. pill caused low mood, metformin caused nausea, inositol made no difference</span>
+      <textarea id="f-side-effects" placeholder="e.g. The combined pill helped my acne but made my mood much worse. I stopped taking it after 3 months. Inositol — tried for 2 months, no noticeable effect."></textarea>
     </div>
 
     <div class="field">
       <label>Have you tried any lifestyle changes for PCOS?</label>
       <div class="check-grid" style="margin-top:8px">
-        <label class="check-item"><input type="checkbox" value="Changed diet or eating habits"><div class="box"></div><span>Changed diet</span></label>
-        <label class="check-item"><input type="checkbox" value="Increased exercise"><div class="box"></div><span>Increased exercise</span></label>
+        <label class="check-item"><input type="checkbox" value="Changed diet or eating habits (e.g. low GI, anti-inflammatory)"><div class="box"></div><span>Changed diet</span></label>
+        <label class="check-item"><input type="checkbox" value="Increased exercise (strength training or cardio)"><div class="box"></div><span>Increased exercise</span></label>
         <label class="check-item"><input type="checkbox" value="Focused on sleep improvement"><div class="box"></div><span>Improved sleep</span></label>
-        <label class="check-item"><input type="checkbox" value="Stress reduction practices"><div class="box"></div><span>Stress reduction</span></label>
+        <label class="check-item"><input type="checkbox" value="Stress reduction (meditation, therapy, etc.)"><div class="box"></div><span>Stress reduction</span></label>
         <label class="check-item"><input type="checkbox" value="Weight management attempts"><div class="box"></div><span>Weight management</span></label>
         <label class="check-item"><input type="checkbox" value="None yet"><div class="box"></div><span>None yet</span></label>
       </div>
+    </div>
+
+    <div class="field">
+      <label>Are there any treatments you want to specifically discuss or request?</label>
+      <span class="hint">e.g. want to try metformin, want to come off the pill, interested in GLP-1, want a referral to a dietitian</span>
+      <textarea id="f-treatment-requests" placeholder="e.g. I'd like to discuss whether metformin is appropriate for me given my insulin resistance symptoms. I also want to explore coming off the combined pill and managing symptoms differently."></textarea>
     </div>
 
     <div class="form-divider"></div>
@@ -813,23 +860,27 @@ async function generateBrief() {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 
   // Gather all data
-  const name        = document.getElementById('f-name').value.trim();
-  const age         = document.getElementById('f-age').value;
-  const diagWhen    = document.getElementById('f-diag-when').value;
-  const diagWho     = document.getElementById('f-diag-who').value;
-  const reason      = document.getElementById('f-reason').value;
-  const impact      = document.getElementById('f-impact').value;
-  const sympCycle   = getChecked('symp-cycle');
-  const sympBody    = getChecked('symp-body');
-  const sympMeta    = getChecked('symp-meta');
-  const sympMental  = getChecked('symp-mental');
-  const sympExtra   = document.getElementById('f-symp-extra').value.trim();
-  const meds        = document.getElementById('f-meds').value.trim();
-  const lifestyle   = getLifestyleChecked();
-  const family      = document.getElementById('f-family').value.trim();
-  const bloods      = document.getElementById('f-bloods').value.trim();
-  const questions   = document.getElementById('f-questions').value.trim();
-  const worried     = document.getElementById('f-worried').value.trim();
+  const name             = document.getElementById('f-name').value.trim();
+  const age              = document.getElementById('f-age').value;
+  const diagWhen         = document.getElementById('f-diag-when').value;
+  const diagWho          = document.getElementById('f-diag-who').value;
+  const reason           = document.getElementById('f-reason').value;
+  const impact           = document.getElementById('f-impact').value;
+  const sympCycle        = getChecked('symp-cycle');
+  const sympBody         = getChecked('symp-body');
+  const sympMeta         = getChecked('symp-meta');
+  const sympMental       = getChecked('symp-mental');
+  const sympExtra        = document.getElementById('f-symp-extra').value.trim();
+  const medsTried        = getChecked('meds-tried');
+  const suppsTried       = getChecked('supps-tried');
+  const treatmentRating  = document.getElementById('f-treatment-rating').value;
+  const sideEffects      = document.getElementById('f-side-effects').value.trim();
+  const treatmentReqs    = document.getElementById('f-treatment-requests').value.trim();
+  const lifestyle        = getLifestyleChecked();
+  const family           = document.getElementById('f-family').value.trim();
+  const bloods           = document.getElementById('f-bloods').value.trim();
+  const questions        = document.getElementById('f-questions').value.trim();
+  const worried          = document.getElementById('f-worried').value.trim();
 
   const allSymptoms = [...sympCycle, ...sympBody, ...sympMeta, ...sympMental];
 
@@ -846,8 +897,19 @@ Current symptoms:
 ${allSymptoms.length > 0 ? allSymptoms.map(s => '- ' + s).join('\n') : '- None selected'}
 ${sympExtra ? 'Additional symptom notes: ' + sympExtra : ''}
 
-Current medications/treatments:
-${meds || 'None reported'}
+Medications tried:
+${medsTried.length > 0 ? medsTried.map(m => '- ' + m).join('\n') : '- None'}
+
+Supplements tried:
+${suppsTried.length > 0 ? suppsTried.map(s => '- ' + s).join('\n') : '- None'}
+
+How well current treatment is working: ${treatmentRating}/10
+
+Side effects or problems with treatments:
+${sideEffects || 'None reported'}
+
+Treatments patient wants to discuss or request:
+${treatmentReqs || 'None specified'}
 
 Lifestyle changes tried:
 ${lifestyle.length > 0 ? lifestyle.join(', ') : 'None yet'}
@@ -867,8 +929,8 @@ ${worried || 'None specified'}
 Generate a structured appointment brief with these sections:
 1. **Patient Overview** — brief summary of who they are and why they're here today
 2. **Current Symptoms** — organised by category, with symptom impact noted
-3. **Current Treatment & Lifestyle** — what they're already doing
-4. **Relevant History** — family history and tests done
+3. **Treatment History** — medications and supplements tried, how well they've worked, any side effects, and what the patient wants to discuss or change
+4. **Lifestyle & Other History** — lifestyle changes tried, family history, blood tests done
 5. **Priority Questions for Today** — 4-6 clear, specific questions the patient needs answered, written as direct questions to the doctor
 6. **What I'd Like From This Appointment** — a clear statement of what outcomes the patient is hoping for
 
