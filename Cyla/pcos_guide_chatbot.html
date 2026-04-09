@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cyla — Your PCOS Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --cream:    #FAF7F2;
+    --warm:     #F3ECE0;
+    --blush:    #EDCFC4;
+    --terracotta: #C96B52;
+    --terra-deep: #A3503A;
+    --sage:     #8A9E8C;
+    --sage-light: #C9D8CA;
+    --text:     #2D2420;
+    --text-mid: #6B5750;
+    --text-soft: #9E8880;
+    --border:   rgba(180,140,120,0.2);
+    --shadow:   rgba(80,40,30,0.08);
+  }
+
+  html, body {
+    height: 100%;
+    background: var(--cream);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    overflow: hidden;
+  }
+
+  /* Subtle grain texture */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
+
+  .app {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    height: 100vh;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  /* ── Sidebar ── */
+  .sidebar {
+    border-right: 1px solid var(--border);
+    padding: 2rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    background: var(--warm);
+    animation: fadeSlideLeft 0.6s ease both;
+  }
+
+  @keyframes fadeSlideLeft {
+    from { opacity: 0; transform: translateX(-16px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+
+  .brand {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .brand-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2rem;
+    font-weight: 300;
+    letter-spacing: 0.04em;
+    color: var(--terracotta);
+    line-height: 1;
+  }
+
+  .brand-sub {
+    font-size: 0.72rem;
+    color: var(--text-soft);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 400;
+  }
+
+  .divider {
+    height: 1px;
+    background: var(--border);
+  }
+
+  .quick-topics p {
+    font-size: 0.72rem;
+    color: var(--text-soft);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 400;
+    margin-bottom: 10px;
+  }
+
+  .topic-btn {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-bottom: 7px;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 300;
+    color: var(--text-mid);
+    transition: all 0.2s;
+    line-height: 1.4;
+  }
+
+  .topic-btn:hover {
+    background: var(--blush);
+    border-color: var(--blush);
+    color: var(--terra-deep);
+    transform: translateX(3px);
+  }
+
+  .topic-btn .icon {
+    display: block;
+    font-size: 0.65rem;
+    color: var(--text-soft);
+    margin-top: 2px;
+  }
+
+  .disclaimer {
+    margin-top: auto;
+    padding: 12px;
+    background: rgba(180,140,120,0.1);
+    border-radius: 8px;
+    border-left: 2px solid var(--blush);
+  }
+
+  .disclaimer p {
+    font-size: 0.7rem;
+    color: var(--text-soft);
+    line-height: 1.5;
+  }
+
+  /* ── Chat Area ── */
+  .chat-area {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    animation: fadeIn 0.8s ease 0.1s both;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  .chat-header {
+    padding: 1.5rem 2rem 1rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+
+  .chat-header h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 400;
+    font-size: 1.1rem;
+    color: var(--text);
+    letter-spacing: 0.02em;
+  }
+
+  .chat-header p {
+    font-size: 0.72rem;
+    color: var(--text-soft);
+    margin-top: 2px;
+  }
+
+  .status-dot {
+    width: 7px;
+    height: 7px;
+    background: var(--sage);
+    border-radius: 50%;
+    animation: pulse 2.5s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(1.2); }
+  }
+
+  .messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    scroll-behavior: smooth;
+  }
+
+  .messages::-webkit-scrollbar { width: 4px; }
+  .messages::-webkit-scrollbar-track { background: transparent; }
+  .messages::-webkit-scrollbar-thumb { background: var(--blush); border-radius: 2px; }
+
+  .welcome {
+    text-align: center;
+    padding: 3rem 2rem;
+    animation: fadeUp 0.7s ease both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .welcome-circle {
+    width: 72px;
+    height: 72px;
+    background: linear-gradient(135deg, var(--blush), var(--sage-light));
+    border-radius: 50%;
+    margin: 0 auto 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+  }
+
+  .welcome h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.6rem;
+    font-weight: 300;
+    color: var(--text);
+    margin-bottom: 0.6rem;
+    letter-spacing: 0.01em;
+  }
+
+  .welcome p {
+    font-size: 0.85rem;
+    color: var(--text-mid);
+    line-height: 1.7;
+    max-width: 380px;
+    margin: 0 auto;
+  }
+
+  .msg {
+    display: flex;
+    gap: 12px;
+    animation: fadeUp 0.35s ease both;
+  }
+
+  .msg.user {
+    flex-direction: row-reverse;
+  }
+
+  .avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 500;
+    margin-top: 2px;
+  }
+
+  .avatar.ai {
+    background: linear-gradient(135deg, var(--blush), var(--sage-light));
+    color: var(--terra-deep);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    font-weight: 400;
+    font-style: italic;
+  }
+
+  .avatar.user-av {
+    background: var(--warm);
+    border: 1px solid var(--border);
+    color: var(--text-mid);
+  }
+
+  .bubble {
+    max-width: 72%;
+    padding: 12px 16px;
+    border-radius: 16px;
+    font-size: 0.85rem;
+    line-height: 1.7;
+  }
+
+  .msg.ai .bubble {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-top-left-radius: 4px;
+    color: var(--text);
+    box-shadow: 0 2px 8px var(--shadow);
+  }
+
+  .msg.user .bubble {
+    background: var(--terracotta);
+    color: #fff;
+    border-top-right-radius: 4px;
+  }
+
+  /* Markdown-like styling inside bubbles */
+  .bubble strong { font-weight: 500; }
+  .bubble em { font-style: italic; color: var(--text-soft); }
+  .bubble ul { padding-left: 1.2em; margin: 0.4em 0; }
+  .bubble li { margin-bottom: 4px; }
+  .bubble p + p { margin-top: 8px; }
+  .bubble h4 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--terra-deep);
+    margin-bottom: 6px;
+    margin-top: 4px;
+  }
+
+  .typing {
+    display: flex;
+    gap: 5px;
+    padding: 14px 16px;
+    align-items: center;
+  }
+
+  .typing span {
+    width: 6px;
+    height: 6px;
+    background: var(--blush);
+    border-radius: 50%;
+    animation: bounce 1.2s infinite;
+  }
+  .typing span:nth-child(2) { animation-delay: 0.2s; }
+  .typing span:nth-child(3) { animation-delay: 0.4s; }
+
+  @keyframes bounce {
+    0%, 60%, 100% { transform: translateY(0); }
+    30% { transform: translateY(-6px); }
+  }
+
+  /* Input area */
+  .input-area {
+    padding: 1.2rem 2rem 1.5rem;
+    border-top: 1px solid var(--border);
+    flex-shrink: 0;
+    background: rgba(250,247,242,0.8);
+    backdrop-filter: blur(8px);
+  }
+
+  .input-row {
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 10px 14px;
+    box-shadow: 0 2px 12px var(--shadow);
+    transition: border-color 0.2s;
+  }
+
+  .input-row:focus-within {
+    border-color: var(--blush);
+  }
+
+  #user-input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 300;
+    color: var(--text);
+    background: transparent;
+    resize: none;
+    min-height: 24px;
+    max-height: 120px;
+    line-height: 1.5;
+  }
+
+  #user-input::placeholder { color: var(--text-soft); }
+
+  .send-btn {
+    width: 34px;
+    height: 34px;
+    background: var(--terracotta);
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.2s;
+    color: #fff;
+  }
+
+  .send-btn:hover { background: var(--terra-deep); transform: scale(1.05); }
+  .send-btn:active { transform: scale(0.97); }
+  .send-btn:disabled { background: var(--blush); cursor: not-allowed; transform: none; }
+
+  .send-btn svg { width: 16px; height: 16px; }
+
+  .input-hint {
+    font-size: 0.67rem;
+    color: var(--text-soft);
+    margin-top: 8px;
+    text-align: center;
+  }
+
+  /* Responsive */
+  @media (max-width: 700px) {
+    .app { grid-template-columns: 1fr; }
+    .sidebar { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-name">Cyla</div>
+      <div class="brand-sub">Your PCOS guide</div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="quick-topics">
+      <p>Quick topics</p>
+      <button class="topic-btn" onclick="sendTopic('What exactly is PCOS and what causes it?')">
+        What is PCOS?
+        <span class="icon">Diagnosis & causes explained</span>
+      </button>
+      <button class="topic-btn" onclick="sendTopic('What are the different PCOS phenotypes and which one might apply to me?')">
+        PCOS phenotypes
+        <span class="icon">Find your type</span>
+      </button>
+      <button class="topic-btn" onclick="sendTopic('How does insulin resistance relate to PCOS and what can I do about it?')">
+        Insulin resistance
+        <span class="icon">Metabolic health</span>
+      </button>
+      <button class="topic-btn" onclick="sendTopic('What lifestyle changes actually help PCOS based on evidence?')">
+        Evidence-based lifestyle
+        <span class="icon">Diet, exercise & sleep</span>
+      </button>
+      <button class="topic-btn" onclick="sendTopic('What are my treatment options for PCOS symptoms?')">
+        Treatment options
+        <span class="icon">Medications & approaches</span>
+      </button>
+      <button class="topic-btn" onclick="sendTopic('How does PCOS affect fertility and what are my options?')">
+        Fertility & conception
+        <span class="icon">What to know & expect</span>
+      </button>
+      <button class="topic-btn" onclick="sendTopic('How does PCOS affect mental health and what can help?')">
+        Mental health & PCOS
+        <span class="icon">Anxiety, mood & wellbeing</span>
+      </button>
+      <button class="topic-btn" onclick="sendTopic('What questions should I ask my doctor at my next PCOS appointment?')">
+        Doctor appointment prep
+        <span class="icon">Questions to bring</span>
+      </button>
+    </div>
+
+    <div class="disclaimer">
+      <p>Cyla shares evidence-based information only. Always work with your healthcare team for personal medical decisions.</p>
+    </div>
+  </aside>
+
+  <!-- Chat -->
+  <main class="chat-area">
+    <div class="chat-header">
+      <div>
+        <h2>Evidence-based PCOS support</h2>
+        <p>Powered by current clinical guidelines</p>
+      </div>
+      <div class="status-dot" title="Online"></div>
+    </div>
+
+    <div class="messages" id="messages">
+      <div class="welcome" id="welcome">
+        <div class="welcome-circle">🌿</div>
+        <h3>You just got diagnosed.<br>It's a lot to take in.</h3>
+        <p>Cyla is here to help you understand what PCOS actually means for <em>you</em> — not just the scary Google results. Ask anything, or pick a topic from the left.</p>
+      </div>
+    </div>
+
+    <div class="input-area">
+      <div class="input-row">
+        <textarea id="user-input" placeholder="Ask anything about PCOS…" rows="1"></textarea>
+        <button class="send-btn" id="send-btn" onclick="sendMessage()" title="Send">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="22" y1="2" x2="11" y2="13"></line>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+          </svg>
+        </button>
+      </div>
+      <p class="input-hint">Not medical advice · Based on international PCOS clinical guidelines</p>
+    </div>
+  </main>
+</div>
+
+<script>
+const SYSTEM_PROMPT = `You are Cyla, a warm and knowledgeable PCOS guide. You help people who have recently been diagnosed with Polycystic Ovary Syndrome (PCOS) understand their condition, feel less overwhelmed, and make sense of their options.
+
+Your knowledge base:
+- Current evidence from the 2023 International PCOS Clinical Guidelines (the gold standard)
+- Rotterdam diagnostic criteria (2003, updated 2023)
+- PCOS phenotypes: Classic A (hyperandrogenism + anovulation + polycystic ovaries), Classic B (hyperandrogenism + anovulation), Ovulatory (hyperandrogenism + polycystic ovaries), Non-androgenic (anovulation + polycystic ovaries)
+- Metabolic aspects: insulin resistance affects ~70% of PCOS patients regardless of weight
+- Evidence-based lifestyle interventions: anti-inflammatory diet, regular moderate exercise, sleep hygiene, stress management
+- Treatment options: combined oral contraceptives, metformin, spironolactone, letrozole (for fertility)
+- Mental health: PCOS significantly increases risk of anxiety and depression; CBT has evidence
+- Fertility: PCOS is the leading cause of anovulatory infertility; most women with PCOS can conceive with support
+- Common myths to debunk: PCOS is not caused by "bad diet", weight loss doesn't cure it, you can have PCOS without ovarian cysts, it's not just a reproductive issue
+
+Your tone:
+- Warm, calm, like a knowledgeable friend
+- Use plain language, not jargon
+- Validate the emotional difficulty of a new diagnosis
+- Be honest about what is and isn't known
+- Never shame around weight or lifestyle
+- Always remind users to work with their healthcare team for personal decisions
+
+Format your responses:
+- Use short paragraphs for readability
+- Use **bold** for key terms when first introduced
+- Use bullet points for lists of options or steps
+- Keep responses focused and not overwhelming (aim for 150-250 words unless more depth is needed)
+- Occasionally use empathetic openers ("That's a really common question…", "This is something a lot of people wonder about…")
+
+Always end with either:
+1. A gentle follow-up question to keep the conversation going, OR
+2. A practical next step they can take
+
+Never claim to replace medical advice. If someone describes symptoms needing urgent care, tell them to contact their doctor.`;
+
+let conversationHistory = [];
+let isLoading = false;
+
+const messagesEl = document.getElementById('messages');
+const inputEl = document.getElementById('user-input');
+const sendBtn = document.getElementById('send-btn');
+
+// Auto-resize textarea
+inputEl.addEventListener('input', function() {
+  this.style.height = 'auto';
+  this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+});
+
+inputEl.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage();
+  }
+});
+
+function sendTopic(text) {
+  inputEl.value = text;
+  sendMessage();
+}
+
+function hideWelcome() {
+  const welcome = document.getElementById('welcome');
+  if (welcome) welcome.remove();
+}
+
+function addMessage(role, content) {
+  hideWelcome();
+  const msgEl = document.createElement('div');
+  msgEl.className = `msg ${role}`;
+
+  const avatar = document.createElement('div');
+  avatar.className = `avatar ${role === 'ai' ? 'ai' : 'user-av'}`;
+  avatar.textContent = role === 'ai' ? 'C' : 'You';
+
+  const bubble = document.createElement('div');
+  bubble.className = 'bubble';
+  bubble.innerHTML = formatMessage(content);
+
+  msgEl.appendChild(avatar);
+  msgEl.appendChild(bubble);
+  messagesEl.appendChild(msgEl);
+  messagesEl.scrollTop = messagesEl.scrollHeight;
+  return bubble;
+}
+
+function addTyping() {
+  hideWelcome();
+  const msgEl = document.createElement('div');
+  msgEl.className = 'msg ai';
+  msgEl.id = 'typing-indicator';
+
+  const avatar = document.createElement('div');
+  avatar.className = 'avatar ai';
+  avatar.textContent = 'C';
+
+  const bubble = document.createElement('div');
+  bubble.className = 'bubble typing';
+  bubble.innerHTML = '<span></span><span></span><span></span>';
+
+  msgEl.appendChild(avatar);
+  msgEl.appendChild(bubble);
+  messagesEl.appendChild(msgEl);
+  messagesEl.scrollTop = messagesEl.scrollHeight;
+}
+
+function removeTyping() {
+  const t = document.getElementById('typing-indicator');
+  if (t) t.remove();
+}
+
+function formatMessage(text) {
+  // Convert markdown-ish to HTML
+  return text
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+    .replace(/^#### (.*?)$/gm, '<h4>$1</h4>')
+    .replace(/^- (.*?)$/gm, '<li>$1</li>')
+    .replace(/(<li>.*<\/li>)/gs, match => `<ul>${match}</ul>`)
+    .replace(/\n\n/g, '</p><p>')
+    .replace(/^(?!<[hul])(.+)$/gm, (m) => m.startsWith('<') ? m : `<p>${m}</p>`)
+    .replace(/<p><\/p>/g, '')
+    .replace(/<p>(<[hul])/g, '$1')
+    .replace(/(<\/[hul][^>]*>)<\/p>/g, '$1');
+}
+
+async function sendMessage() {
+  const text = inputEl.value.trim();
+  if (!text || isLoading) return;
+
+  inputEl.value = '';
+  inputEl.style.height = 'auto';
+  isLoading = true;
+  sendBtn.disabled = true;
+
+  addMessage('user', text);
+  conversationHistory.push({ role: 'user', content: text });
+
+  addTyping();
+
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: SYSTEM_PROMPT,
+        messages: conversationHistory
+      })
+    });
+
+    const data = await response.json();
+    removeTyping();
+
+    if (data.content && data.content[0]) {
+      const reply = data.content[0].text;
+      conversationHistory.push({ role: 'assistant', content: reply });
+      addMessage('ai', reply);
+    } else {
+      addMessage('ai', "I'm sorry, I had trouble responding. Please try again.");
+    }
+  } catch (err) {
+    removeTyping();
+    addMessage('ai', "Something went wrong connecting. Please check your connection and try again.");
+  }
+
+  isLoading = false;
+  sendBtn.disabled = false;
+  inputEl.focus();
+}
+
+// Initial greeting after short delay
+setTimeout(() => {
+  conversationHistory.push({
+    role: 'assistant',
+    content: "Hi, I'm Cyla — here to help you make sense of your PCOS diagnosis. Getting diagnosed can feel overwhelming, and it's normal to have a flood of questions. Whether you want to understand what PCOS actually is, what it means for your body, or how to talk to your doctor — I'm here for all of it.\n\nWhat's on your mind?"
+  });
+  addMessage('ai', "Hi, I'm Cyla — here to help you make sense of your PCOS diagnosis. Getting diagnosed can feel overwhelming, and it's normal to have a flood of questions. Whether you want to understand what PCOS actually is, what it means for your body, or how to talk to your doctor — I'm here for all of it.\n\nWhat's on your mind?");
+}, 600);
+</script>
+</body>
+</html>
