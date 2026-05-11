@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PCOSai — GP Appointment Prep</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --cream:       #FAF7F2;
+    --warm:        #F3ECE0;
+    --blush:       #EDCFC4;
+    --blush-deep:  #D9A898;
+    --terra:       #C96B52;
+    --terra-deep:  #A3503A;
+    --sage:        #8A9E8C;
+    --sage-light:  #C9D8CA;
+    --sage-dark:   #5C7A5E;
+    --text:        #2D2420;
+    --text-mid:    #6B5750;
+    --text-soft:   #9E8880;
+    --border:      rgba(180,140,120,0.22);
+    --border-soft: rgba(180,140,120,0.12);
+    --shadow:      rgba(80,40,30,0.07);
+    --shadow-md:   rgba(80,40,30,0.12);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    min-height: 100vh;
+    background: var(--cream);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+  }
+
+  /* grain overlay */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 999;
+  }
+
+  /* ── Layout ── */
+  .page { max-width: 680px; margin: 0 auto; padding: 3rem 1.5rem 6rem; }
+
+  /* ── Header ── */
+  .top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 3rem;
+    animation: fadeDown 0.5s ease both;
+  }
+
+  @keyframes fadeDown {
+    from { opacity:0; transform: translateY(-10px); }
+    to   { opacity:1; transform: translateY(0); }
+  }
+
+  .logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.6rem;
+    font-weight: 300;
+    color: var(--terra);
+    letter-spacing: 0.04em;
+    text-decoration: none;
+  }
+
+  .logo span {
+    font-size: 0.65rem;
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text-soft);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    display: block;
+    margin-top: -2px;
+  }
+
+  .step-indicator {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.72rem;
+    color: var(--text-soft);
+    letter-spacing: 0.06em;
+  }
+
+  .step-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--border);
+    transition: background 0.3s, transform 0.3s;
+  }
+  .step-dot.active { background: var(--terra); transform: scale(1.2); }
+  .step-dot.done   { background: var(--sage); }
+
+  /* ── Section headings ── */
+  .section-intro {
+    margin-bottom: 2.5rem;
+    animation: fadeUp 0.5s ease 0.1s both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity:0; transform: translateY(14px); }
+    to   { opacity:1; transform: translateY(0); }
+  }
+
+  .section-intro h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2rem;
+    font-weight: 300;
+    letter-spacing: -0.01em;
+    color: var(--text);
+    line-height: 1.2;
+    margin-bottom: 0.6rem;
+  }
+
+  .section-intro p {
+    font-size: 0.85rem;
+    color: var(--text-mid);
+    line-height: 1.7;
+  }
+
+  /* ── Steps ── */
+  .step { display: none; }
+  .step.active { display: block; animation: fadeUp 0.4s ease both; }
+
+  /* ── Form elements ── */
+  .field { margin-bottom: 1.4rem; }
+
+  .field label {
+    display: block;
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--text-mid);
+    margin-bottom: 6px;
+    letter-spacing: 0.02em;
+  }
+
+  .field .hint {
+    font-size: 0.7rem;
+    color: var(--text-soft);
+    margin-bottom: 7px;
+    display: block;
+    font-weight: 300;
+  }
+
+  .field input[type="text"],
+  .field input[type="number"],
+  .field textarea,
+  .field select {
+    width: 100%;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 11px 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 300;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    resize: vertical;
+  }
+
+  .field input:focus,
+  .field textarea:focus,
+  .field select:focus {
+    border-color: var(--blush-deep);
+    box-shadow: 0 0 0 3px rgba(201,107,82,0.08);
+  }
+
+  .field textarea { min-height: 90px; line-height: 1.6; }
+
+  /* Checkbox grid */
+  .check-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 8px;
+  }
+
+  .check-item {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 9px 12px;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    cursor: pointer;
+    transition: all 0.18s;
+    font-size: 0.8rem;
+    color: var(--text-mid);
+    user-select: none;
+  }
+
+  .check-item:hover { border-color: var(--blush-deep); background: #fff8f6; }
+
+  .check-item input[type="checkbox"] { display: none; }
+
+  .check-item .box {
+    width: 16px; height: 16px;
+    border: 1.5px solid var(--border);
+    border-radius: 4px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.18s;
+  }
+
+  .check-item input:checked ~ .box {
+    background: var(--terra);
+    border-color: var(--terra);
+  }
+
+  .check-item input:checked ~ .box::after {
+    content: '';
+    width: 8px; height: 5px;
+    border-left: 1.5px solid #fff;
+    border-bottom: 1.5px solid #fff;
+    transform: rotate(-45deg) translateY(-1px);
+    display: block;
+  }
+
+  .check-item input:checked ~ .box + span { color: var(--terra-deep); font-weight: 400; }
+  .check-item:has(input:checked) { border-color: var(--blush-deep); background: #fff8f6; }
+
+  /* Scale slider */
+  .scale-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .scale-row input[type="range"] {
+    flex: 1;
+    -webkit-appearance: none;
+    height: 4px;
+    background: var(--warm);
+    border-radius: 2px;
+    outline: none;
+  }
+
+  .scale-row input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px; height: 18px;
+    background: var(--terra);
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid #fff;
+    box-shadow: 0 1px 4px var(--shadow-md);
+  }
+
+  .scale-val {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.3rem;
+    color: var(--terra);
+    min-width: 28px;
+    text-align: center;
+  }
+
+  .scale-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.65rem;
+    color: var(--text-soft);
+    margin-top: 4px;
+    padding: 0 2px;
+  }
+
+  /* Divider */
+  .form-divider {
+    height: 1px;
+    background: var(--border-soft);
+    margin: 1.8rem 0;
+  }
+
+  .field-group-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    font-weight: 400;
+    color: var(--text);
+    margin-bottom: 1rem;
+    margin-top: 0.3rem;
+  }
+
+  /* ── Navigation buttons ── */
+  .btn-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 2rem;
+    align-items: center;
+  }
+
+  .btn {
+    padding: 11px 24px;
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 400;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+    outline: none;
+  }
+
+  .btn-primary {
+    background: var(--terra);
+    color: #fff;
+    flex: 1;
+  }
+  .btn-primary:hover { background: var(--terra-deep); transform: translateY(-1px); box-shadow: 0 4px 12px var(--shadow-md); }
+  .btn-primary:active { transform: translateY(0); }
+  .btn-primary:disabled { background: var(--blush); cursor: not-allowed; transform: none; box-shadow: none; }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--text-mid);
+    border: 1px solid var(--border);
+  }
+  .btn-secondary:hover { background: var(--warm); }
+
+  /* ── Generating state ── */
+  .generating {
+    text-align: center;
+    padding: 4rem 2rem;
+  }
+
+  .gen-ring {
+    width: 56px; height: 56px;
+    border: 2px solid var(--blush);
+    border-top-color: var(--terra);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 1.5rem;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .generating h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.4rem;
+    font-weight: 300;
+    color: var(--text);
+    margin-bottom: 0.5rem;
+  }
+
+  .generating p { font-size: 0.8rem; color: var(--text-soft); }
+
+  /* ── Brief output ── */
+  #brief-output { display: none; animation: fadeUp 0.5s ease both; }
+
+  .brief-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 24px var(--shadow);
+    margin-bottom: 1.5rem;
+  }
+
+  .brief-header {
+    background: var(--warm);
+    border-bottom: 1px solid var(--border);
+    padding: 1.5rem 2rem;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .brief-header h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.4rem;
+    font-weight: 400;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+
+  .brief-header p {
+    font-size: 0.75rem;
+    color: var(--text-soft);
+  }
+
+  .brief-badge {
+    font-size: 0.65rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    background: var(--sage-light);
+    color: var(--sage-dark);
+    padding: 4px 10px;
+    border-radius: 20px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .brief-body {
+    padding: 1.5rem 2rem;
+    font-size: 0.84rem;
+    line-height: 1.8;
+    color: var(--text);
+  }
+
+  .brief-body h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    font-weight: 500;
+    color: var(--terra-deep);
+    margin: 1.4rem 0 0.5rem;
+    padding-bottom: 4px;
+    border-bottom: 1px solid var(--border-soft);
+  }
+
+  .brief-body h3:first-child { margin-top: 0; }
+
+  .brief-body ul { padding-left: 1.4em; margin: 0.4em 0; }
+  .brief-body li { margin-bottom: 5px; }
+  .brief-body p  { margin-bottom: 0.6em; }
+  .brief-body strong { font-weight: 500; }
+
+  .action-bar {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 10px 18px;
+    border-radius: 10px;
+    font-size: 0.8rem;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 400;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+  }
+
+  .action-btn.print {
+    background: var(--terra);
+    color: #fff;
+    border: none;
+  }
+  .action-btn.print:hover { background: var(--terra-deep); }
+
+  .action-btn.copy {
+    background: transparent;
+    color: var(--text-mid);
+    border: 1px solid var(--border);
+  }
+  .action-btn.copy:hover { background: var(--warm); }
+
+  .action-btn.restart {
+    background: transparent;
+    color: var(--text-soft);
+    border: 1px solid var(--border-soft);
+    margin-left: auto;
+  }
+  .action-btn.restart:hover { color: var(--text-mid); background: var(--warm); }
+
+  .action-btn svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+  .disclaimer-note {
+    font-size: 0.7rem;
+    color: var(--text-soft);
+    line-height: 1.5;
+    padding: 10px 14px;
+    background: var(--warm);
+    border-radius: 8px;
+    border-left: 2px solid var(--blush);
+    margin-top: 1rem;
+  }
+
+  /* ── Print styles ── */
+  @media print {
+    body { background: #fff; }
+    body::after { display: none; }
+    .top-bar, .action-bar, .disclaimer-note, .step-indicator { display: none; }
+    .brief-card { box-shadow: none; border: 1px solid #ddd; }
+    .brief-body { font-size: 11pt; }
+  }
+</style>
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-EWC74S7CVJ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-EWC74S7CVJ');
+</script>
+</head>
+<body>
+<div class="page">
+
+  <!-- Top bar -->
+  <div class="top-bar">
+    <a href="#" class="logo">PCOSai <span>GP appointment prep</span></a>
+    <div class="step-indicator">
+      <div class="step-dot active" id="dot-1"></div>
+      <div class="step-dot" id="dot-2"></div>
+      <div class="step-dot" id="dot-3"></div>
+      <div class="step-dot" id="dot-4"></div>
+    </div>
+  </div>
+
+  <!-- ── STEP 1: About you ── -->
+  <div class="step active" id="step-1">
+    <div class="section-intro">
+      <h1>Let's prepare your appointment.</h1>
+      <p>Answer a few questions and PCOSai will generate a clear, one-page clinical summary to share with your GP. Takes about 3 minutes.</p>
+    </div>
+
+    <div class="field-group-title">About you</div>
+
+    <div class="field">
+      <label>First name <span style="color:var(--text-soft);font-weight:300">(optional — for your brief)</span></label>
+      <input type="text" id="f-name" placeholder="e.g. Sarah">
+    </div>
+
+    <div class="field">
+      <label>Age</label>
+      <input type="number" id="f-age" placeholder="e.g. 26" min="13" max="60" style="max-width:120px">
+    </div>
+
+    <div class="field">
+      <label>When were you diagnosed with PCOS?</label>
+      <select id="f-diag-when">
+        <option value="">Select…</option>
+        <option>Within the last month</option>
+        <option>1–6 months ago</option>
+        <option>6–12 months ago</option>
+        <option>Over a year ago</option>
+        <option>Not yet officially diagnosed (suspected)</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>Who diagnosed you?</label>
+      <select id="f-diag-who">
+        <option value="">Select…</option>
+        <option>GP / family doctor</option>
+        <option>Gynaecologist</option>
+        <option>Endocrinologist</option>
+        <option>Self-suspected, not yet diagnosed</option>
+        <option>Other specialist</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>What is your main reason for this appointment?</label>
+      <span class="hint">This helps frame your brief</span>
+      <select id="f-reason">
+        <option value="">Select…</option>
+        <option>First appointment after diagnosis — want to understand my PCOS</option>
+        <option>Concerned about symptoms that aren't being managed</option>
+        <option>Wanting to discuss fertility / trying to conceive</option>
+        <option>Concerns about metabolic health (weight, blood sugar, energy)</option>
+        <option>Mental health concerns linked to PCOS</option>
+        <option>Review of current treatment / medication</option>
+        <option>Getting a second opinion</option>
+        <option>Unsure — want a general PCOS review</option>
+      </select>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="goTo(2)">Continue →</button>
+    </div>
+  </div>
+
+  <!-- ── STEP 2: Symptoms ── -->
+  <div class="step" id="step-2">
+    <div class="section-intro">
+      <h1>Your symptoms.</h1>
+      <p>Select everything you experience. Your doctor needs the full picture — don't minimise anything.</p>
+    </div>
+
+    <div class="field-group-title">Cycle & reproductive</div>
+    <div class="field">
+      <div class="check-grid" id="symp-cycle">
+        <label class="check-item"><input type="checkbox" value="Irregular or absent periods"><div class="box"></div><span>Irregular / absent periods</span></label>
+        <label class="check-item"><input type="checkbox" value="Very heavy periods"><div class="box"></div><span>Very heavy periods</span></label>
+        <label class="check-item"><input type="checkbox" value="Painful periods"><div class="box"></div><span>Painful periods</span></label>
+        <label class="check-item"><input type="checkbox" value="Difficulty getting pregnant"><div class="box"></div><span>Difficulty getting pregnant</span></label>
+        <label class="check-item"><input type="checkbox" value="Pelvic pain"><div class="box"></div><span>Pelvic pain</span></label>
+      </div>
+    </div>
+
+    <div class="form-divider"></div>
+    <div class="field-group-title">Skin, hair & body</div>
+    <div class="field">
+      <div class="check-grid" id="symp-body">
+        <label class="check-item"><input type="checkbox" value="Excess facial or body hair (hirsutism)"><div class="box"></div><span>Excess facial / body hair</span></label>
+        <label class="check-item"><input type="checkbox" value="Acne (face, back or chest)"><div class="box"></div><span>Acne</span></label>
+        <label class="check-item"><input type="checkbox" value="Scalp hair thinning or loss"><div class="box"></div><span>Hair thinning / loss</span></label>
+        <label class="check-item"><input type="checkbox" value="Darkened skin patches (acanthosis nigricans)"><div class="box"></div><span>Dark skin patches</span></label>
+        <label class="check-item"><input type="checkbox" value="Skin tags"><div class="box"></div><span>Skin tags</span></label>
+        <label class="check-item"><input type="checkbox" value="Unexplained weight gain"><div class="box"></div><span>Unexplained weight gain</span></label>
+      </div>
+    </div>
+
+    <div class="form-divider"></div>
+    <div class="field-group-title">Energy & metabolic</div>
+    <div class="field">
+      <div class="check-grid" id="symp-meta">
+        <label class="check-item"><input type="checkbox" value="Persistent fatigue or low energy"><div class="box"></div><span>Fatigue / low energy</span></label>
+        <label class="check-item"><input type="checkbox" value="Sugar cravings or energy crashes after eating"><div class="box"></div><span>Sugar cravings / energy crashes</span></label>
+        <label class="check-item"><input type="checkbox" value="Difficulty losing weight despite effort"><div class="box"></div><span>Difficulty losing weight</span></label>
+        <label class="check-item"><input type="checkbox" value="Frequent hunger or feeling unsatisfied after meals"><div class="box"></div><span>Frequent hunger</span></label>
+        <label class="check-item"><input type="checkbox" value="Sleep problems or poor sleep quality"><div class="box"></div><span>Sleep problems</span></label>
+        <label class="check-item"><input type="checkbox" value="Bloating"><div class="box"></div><span>Bloating</span></label>
+      </div>
+    </div>
+
+    <div class="form-divider"></div>
+    <div class="field-group-title">Mental health</div>
+    <div class="field">
+      <div class="check-grid" id="symp-mental">
+        <label class="check-item"><input type="checkbox" value="Anxiety"><div class="box"></div><span>Anxiety</span></label>
+        <label class="check-item"><input type="checkbox" value="Low mood or depression"><div class="box"></div><span>Low mood / depression</span></label>
+        <label class="check-item"><input type="checkbox" value="Mood swings or irritability"><div class="box"></div><span>Mood swings / irritability</span></label>
+        <label class="check-item"><input type="checkbox" value="Body image concerns"><div class="box"></div><span>Body image concerns</span></label>
+        <label class="check-item"><input type="checkbox" value="Brain fog or difficulty concentrating"><div class="box"></div><span>Brain fog</span></label>
+      </div>
+    </div>
+
+    <div class="form-divider"></div>
+    <div class="field">
+      <label>How much are your symptoms affecting your daily life?</label>
+      <div class="scale-row" style="margin-top:10px">
+        <input type="range" min="1" max="10" value="5" id="f-impact" oninput="document.getElementById('impact-val').textContent=this.value">
+        <div class="scale-val" id="impact-val">5</div>
+      </div>
+      <div class="scale-labels"><span>Minimal impact</span><span>Severe impact</span></div>
+    </div>
+
+    <div class="field" style="margin-top:1rem">
+      <label>Anything else about your symptoms you want your doctor to know?</label>
+      <textarea id="f-symp-extra" placeholder="e.g. My periods have been absent for 4 months. The acne started at age 16…"></textarea>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="goTo(1)">← Back</button>
+      <button class="btn btn-primary" onclick="goTo(3)">Continue →</button>
+    </div>
+  </div>
+
+  <!-- ── STEP 3: History & questions ── -->
+  <div class="step" id="step-3">
+    <div class="section-intro">
+      <h1>Medical history & your questions.</h1>
+      <p>The more context your doctor has, the better the appointment. And don't leave without getting your questions answered.</p>
+    </div>
+
+    <div class="field-group-title">Current & past treatments</div>
+
+    <div class="field">
+      <label>Medications you are currently taking or have tried</label>
+      <span class="hint">Tick all that apply — include current and past</span>
+      <div class="check-grid" style="margin-top:8px" id="meds-tried">
+        <label class="check-item"><input type="checkbox" value="Combined oral contraceptive pill (e.g. Yasmin, Microgynon, Cilest)"><div class="box"></div><span>Combined pill</span></label>
+        <label class="check-item"><input type="checkbox" value="Metformin"><div class="box"></div><span>Metformin</span></label>
+        <label class="check-item"><input type="checkbox" value="Spironolactone"><div class="box"></div><span>Spironolactone</span></label>
+        <label class="check-item"><input type="checkbox" value="Letrozole (for ovulation induction)"><div class="box"></div><span>Letrozole</span></label>
+        <label class="check-item"><input type="checkbox" value="Clomiphene citrate (Clomid)"><div class="box"></div><span>Clomid</span></label>
+        <label class="check-item"><input type="checkbox" value="GLP-1 agonist (e.g. Ozempic, Wegovy, Saxenda)"><div class="box"></div><span>GLP-1 / Ozempic</span></label>
+        <label class="check-item"><input type="checkbox" value="Topical treatments for acne or hair (e.g. Vaniqa, retinoids)"><div class="box"></div><span>Topical treatments</span></label>
+        <label class="check-item"><input type="checkbox" value="None yet"><div class="box"></div><span>None yet</span></label>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Supplements you have tried</label>
+      <span class="hint">Tick all that apply</span>
+      <div class="check-grid" style="margin-top:8px" id="supps-tried">
+        <label class="check-item"><input type="checkbox" value="Inositol (myo-inositol or d-chiro-inositol)"><div class="box"></div><span>Inositol</span></label>
+        <label class="check-item"><input type="checkbox" value="Magnesium"><div class="box"></div><span>Magnesium</span></label>
+        <label class="check-item"><input type="checkbox" value="Spearmint tea or capsules"><div class="box"></div><span>Spearmint</span></label>
+        <label class="check-item"><input type="checkbox" value="Vitamin D"><div class="box"></div><span>Vitamin D</span></label>
+        <label class="check-item"><input type="checkbox" value="Omega-3 / fish oil"><div class="box"></div><span>Omega-3</span></label>
+        <label class="check-item"><input type="checkbox" value="Berberine"><div class="box"></div><span>Berberine</span></label>
+        <label class="check-item"><input type="checkbox" value="N-acetyl cysteine (NAC)"><div class="box"></div><span>NAC</span></label>
+        <label class="check-item"><input type="checkbox" value="Zinc"><div class="box"></div><span>Zinc</span></label>
+        <label class="check-item"><input type="checkbox" value="None"><div class="box"></div><span>None</span></label>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>How well has your current treatment been working overall?</label>
+      <div class="scale-row" style="margin-top:10px">
+        <input type="range" min="1" max="10" value="5" id="f-treatment-rating" oninput="document.getElementById('treatment-val').textContent=this.value">
+        <div class="scale-val" id="treatment-val">5</div>
+      </div>
+      <div class="scale-labels"><span>Not working at all</span><span>Working very well</span></div>
+    </div>
+
+    <div class="field" style="margin-top:1rem">
+      <label>Any side effects or problems with treatments you've tried?</label>
+      <span class="hint">e.g. pill caused low mood, metformin caused nausea, inositol made no difference</span>
+      <textarea id="f-side-effects" placeholder="e.g. The combined pill helped my acne but made my mood much worse. I stopped taking it after 3 months. Inositol — tried for 2 months, no noticeable effect."></textarea>
+    </div>
+
+    <div class="field">
+      <label>Have you tried any lifestyle changes for PCOS?</label>
+      <div class="check-grid" style="margin-top:8px">
+        <label class="check-item"><input type="checkbox" value="Changed diet or eating habits (e.g. low GI, anti-inflammatory)"><div class="box"></div><span>Changed diet</span></label>
+        <label class="check-item"><input type="checkbox" value="Increased exercise (strength training or cardio)"><div class="box"></div><span>Increased exercise</span></label>
+        <label class="check-item"><input type="checkbox" value="Focused on sleep improvement"><div class="box"></div><span>Improved sleep</span></label>
+        <label class="check-item"><input type="checkbox" value="Stress reduction (meditation, therapy, etc.)"><div class="box"></div><span>Stress reduction</span></label>
+        <label class="check-item"><input type="checkbox" value="Weight management attempts"><div class="box"></div><span>Weight management</span></label>
+        <label class="check-item"><input type="checkbox" value="None yet"><div class="box"></div><span>None yet</span></label>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Are there any treatments you want to specifically discuss or request?</label>
+      <span class="hint">e.g. want to try metformin, want to come off the pill, interested in GLP-1, want a referral to a dietitian</span>
+      <textarea id="f-treatment-requests" placeholder="e.g. I'd like to discuss whether metformin is appropriate for me given my insulin resistance symptoms. I also want to explore coming off the combined pill and managing symptoms differently."></textarea>
+    </div>
+
+    <div class="form-divider"></div>
+    <div class="field-group-title">Relevant history</div>
+
+    <div class="field">
+      <label>Family history relevant to PCOS</label>
+      <span class="hint">e.g. type 2 diabetes, PCOS, thyroid conditions, heart disease</span>
+      <textarea id="f-family" placeholder="e.g. Mother has type 2 diabetes. Sister also has PCOS."></textarea>
+    </div>
+
+    <div class="field">
+      <label>Blood tests you've already had</label>
+      <span class="hint">If you know results, include them — it helps your doctor know what's already been checked</span>
+      <textarea id="f-bloods" placeholder="e.g. Testosterone — slightly elevated. AMH — high. Fasting glucose — normal. Thyroid not checked."></textarea>
+    </div>
+
+    <div class="form-divider"></div>
+    <div class="field-group-title">Your questions for the doctor</div>
+
+    <div class="field">
+      <label>What do you most want answered at this appointment?</label>
+      <span class="hint">Write freely — PCOSai will organise these into clear questions</span>
+      <textarea id="f-questions" placeholder="e.g. I want to know if I have insulin resistance. I'm worried about my fertility. I'm not sure the pill is the right treatment for me. What tests should I be having regularly?"></textarea>
+    </div>
+
+    <div class="field">
+      <label>Is there anything you're worried your doctor might dismiss or not take seriously?</label>
+      <textarea id="f-worried" placeholder="e.g. My last GP told me to just lose weight. I feel my mental health symptoms are being ignored."></textarea>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="goTo(2)">← Back</button>
+      <button class="btn btn-primary" onclick="generateBrief()">Generate my brief →</button>
+    </div>
+  </div>
+
+  <!-- ── STEP 4: Generating ── -->
+  <div class="step" id="step-generating">
+    <div class="generating">
+      <div class="gen-ring"></div>
+      <h3>Preparing your appointment brief…</h3>
+      <p>PCOSai is organising your information into a clear clinical summary.</p>
+    </div>
+  </div>
+
+  <!-- ── STEP 5: Output ── -->
+  <div class="step" id="step-result">
+    <div class="section-intro">
+      <h1>Your appointment brief is ready.</h1>
+      <p>Show this to your doctor at the start of your appointment, or read from it. It covers everything they need to know.</p>
+    </div>
+
+    <div id="brief-output">
+      <div class="brief-card">
+        <div class="brief-header">
+          <div>
+            <h2 id="brief-title">PCOS Appointment Brief</h2>
+            <p id="brief-date"></p>
+          </div>
+          <div class="brief-badge">Generated by PCOSai</div>
+        </div>
+        <div class="brief-body" id="brief-body"></div>
+      </div>
+
+      <div class="action-bar">
+        <button class="action-btn print" onclick="window.print()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          Print / Save as PDF
+        </button>
+        <button class="action-btn copy" id="copy-btn" onclick="copyBrief()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          Copy text
+        </button>
+        <button class="action-btn restart" onclick="restart()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.58"/></svg>
+          Start over
+        </button>
+      </div>
+
+      <p class="disclaimer-note">This brief is an informational summary to support your conversation with your doctor. It is not a medical document and does not constitute medical advice. Always follow the guidance of your healthcare provider.</p>
+    </div>
+  </div>
+
+</div><!-- /page -->
+
+<script>
+let currentStep = 1;
+
+function goTo(n) {
+  // Validate step 1
+  if (n === 2) {
+    const reason = document.getElementById('f-reason').value;
+    if (!reason) {
+      document.getElementById('f-reason').focus();
+      document.getElementById('f-reason').style.borderColor = 'var(--terra)';
+      setTimeout(() => document.getElementById('f-reason').style.borderColor = '', 1500);
+      return;
+    }
+  }
+
+  document.getElementById('step-' + currentStep).classList.remove('active');
+  currentStep = n;
+  document.getElementById('step-' + n).classList.add('active');
+  updateDots();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function updateDots() {
+  for (let i = 1; i <= 4; i++) {
+    const dot = document.getElementById('dot-' + i);
+    dot.classList.remove('active', 'done');
+    if (i === currentStep) dot.classList.add('active');
+    else if (i < currentStep) dot.classList.add('done');
+  }
+}
+
+function getChecked(containerId) {
+  const container = document.getElementById(containerId);
+  if (!container) return [];
+  return Array.from(container.querySelectorAll('input[type="checkbox"]:checked')).map(cb => cb.value);
+}
+
+function getLifestyleChecked() {
+  return Array.from(document.querySelectorAll('#step-3 .check-grid input[type="checkbox"]:checked')).map(cb => cb.value);
+}
+
+async function generateBrief() {
+  // Hide step 3, show generating
+  document.getElementById('step-3').classList.remove('active');
+  document.getElementById('step-generating').classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  // Gather all data
+  const name             = document.getElementById('f-name').value.trim();
+  const age              = document.getElementById('f-age').value;
+  const diagWhen         = document.getElementById('f-diag-when').value;
+  const diagWho          = document.getElementById('f-diag-who').value;
+  const reason           = document.getElementById('f-reason').value;
+  const impact           = document.getElementById('f-impact').value;
+  const sympCycle        = getChecked('symp-cycle');
+  const sympBody         = getChecked('symp-body');
+  const sympMeta         = getChecked('symp-meta');
+  const sympMental       = getChecked('symp-mental');
+  const sympExtra        = document.getElementById('f-symp-extra').value.trim();
+  const medsTried        = getChecked('meds-tried');
+  const suppsTried       = getChecked('supps-tried');
+  const treatmentRating  = document.getElementById('f-treatment-rating').value;
+  const sideEffects      = document.getElementById('f-side-effects').value.trim();
+  const treatmentReqs    = document.getElementById('f-treatment-requests').value.trim();
+  const lifestyle        = getLifestyleChecked();
+  const family           = document.getElementById('f-family').value.trim();
+  const bloods           = document.getElementById('f-bloods').value.trim();
+  const questions        = document.getElementById('f-questions').value.trim();
+  const worried          = document.getElementById('f-worried').value.trim();
+
+  const allSymptoms = [...sympCycle, ...sympBody, ...sympMeta, ...sympMental];
+
+  const prompt = `You are PCOSai, a PCOS patient advocate. Generate a clear, well-structured GP appointment brief for a PCOS patient based on the following information. 
+
+Patient details:
+- Name: ${name || 'Not provided'}
+- Age: ${age || 'Not provided'}
+- Diagnosed: ${diagWhen} by ${diagWho}
+- Reason for this appointment: ${reason}
+- Symptom impact on daily life: ${impact}/10
+
+Current symptoms:
+${allSymptoms.length > 0 ? allSymptoms.map(s => '- ' + s).join('\n') : '- None selected'}
+${sympExtra ? 'Additional symptom notes: ' + sympExtra : ''}
+
+Medications tried:
+${medsTried.length > 0 ? medsTried.map(m => '- ' + m).join('\n') : '- None'}
+
+Supplements tried:
+${suppsTried.length > 0 ? suppsTried.map(s => '- ' + s).join('\n') : '- None'}
+
+How well current treatment is working: ${treatmentRating}/10
+
+Side effects or problems with treatments:
+${sideEffects || 'None reported'}
+
+Treatments patient wants to discuss or request:
+${treatmentReqs || 'None specified'}
+
+Lifestyle changes tried:
+${lifestyle.length > 0 ? lifestyle.join(', ') : 'None yet'}
+
+Relevant family history:
+${family || 'None reported'}
+
+Blood tests already done:
+${bloods || 'Not specified'}
+
+Patient's questions and concerns:
+${questions || 'Not specified'}
+
+Concerns about being dismissed:
+${worried || 'None specified'}
+
+Generate a structured appointment brief with these sections:
+1. **Patient Overview** — brief summary of who they are and why they're here today
+2. **Current Symptoms** — organised by category, with symptom impact noted
+3. **Treatment History** — medications and supplements tried, how well they've worked, any side effects, and what the patient wants to discuss or change
+4. **Lifestyle & Other History** — lifestyle changes tried, family history, blood tests done
+5. **Priority Questions for Today** — 4-6 clear, specific questions the patient needs answered, written as direct questions to the doctor
+6. **What I'd Like From This Appointment** — a clear statement of what outcomes the patient is hoping for
+
+Tone: professional enough to be taken seriously by a GP, but written from the patient's perspective (use "I" voice). Be specific and assertive — this patient deserves to be heard. Keep it concise and scannable. Use bullet points within sections. Do not add disclaimers or notes about being an AI — this is the brief itself.`;
+
+  try {
+    const response = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    const data = await response.json();
+    const briefText = data.content?.[0]?.text || 'Unable to generate brief. Please try again.';
+
+    // Set title
+    const title = name ? `${name}'s PCOS Appointment Brief` : 'PCOS Appointment Brief';
+    document.getElementById('brief-title').textContent = title;
+    document.getElementById('brief-date').textContent = 'Prepared ' + new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+
+    // Render markdown-ish content
+    document.getElementById('brief-body').innerHTML = renderBrief(briefText);
+    document.getElementById('brief-output').style.display = 'block';
+
+    // Switch to result
+    document.getElementById('step-generating').classList.remove('active');
+    document.getElementById('step-result').classList.add('active');
+    currentStep = 4;
+    updateDots();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  } catch (err) {
+    document.getElementById('step-generating').classList.remove('active');
+    document.getElementById('step-3').classList.add('active');
+    currentStep = 3;
+    updateDots();
+    alert('Something went wrong generating your brief. Please check your connection and try again.');
+  }
+}
+
+function renderBrief(text) {
+  return text
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/^### (.*?)$/gm, '<h3>$1</h3>')
+    .replace(/^## (.*?)$/gm, '<h3>$1</h3>')
+    .replace(/^# (.*?)$/gm, '<h3>$1</h3>')
+    .replace(/^- (.*?)$/gm, '<li>$1</li>')
+    .replace(/^(\d+)\. (.*?)$/gm, '<li>$2</li>')
+    .replace(/(<li>[\s\S]*?<\/li>)/g, m => `<ul>${m}</ul>`)
+    .replace(/<\/ul>\s*<ul>/g, '')
+    .replace(/\n\n/g, '\n')
+    .replace(/\n(?!<)/g, '<br>');
+}
+
+function copyBrief() {
+  const bodyEl = document.getElementById('brief-body');
+  const text = bodyEl.innerText;
+  navigator.clipboard.writeText(
+    document.getElementById('brief-title').textContent + '\n' +
+    document.getElementById('brief-date').textContent + '\n\n' +
+    text
+  ).then(() => {
+    const btn = document.getElementById('copy-btn');
+    btn.textContent = '✓ Copied!';
+    setTimeout(() => {
+      btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy text`;
+    }, 2000);
+  });
+}
+
+function restart() {
+  if (!confirm('Start over? Your current brief will be cleared.')) return;
+  location.reload();
+}
+</script>
+</body>
+</html>
